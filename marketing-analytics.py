@@ -8,68 +8,45 @@ st.set_page_config(
     page_title="Marketing Analytics",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed"  # На телефоне сайдбар будет скрыт
+    initial_sidebar_state="collapsed"
 )
 
 # --- АДАПТИВНЫЙ CSS ДЛЯ ТЕЛЕФОНА ---
 st.markdown("""
 <style>
     @media (max-width: 768px) {
-        /* На телефоне убираем лишние отступы */
         .main .block-container {
             padding: 1rem;
         }
-        
-        /* Колонки становятся вертикальными */
         .row-widget.stColumns {
             flex-direction: column;
         }
-        
-        /* Уменьшаем шрифты для мобильных */
         h1 {
             font-size: 1.5rem !important;
         }
-        
         h2 {
             font-size: 1.3rem !important;
         }
-        
         h3 {
             font-size: 1.1rem !important;
         }
-        
-        /* Кнопки занимают всю ширину */
         .stButton button {
             width: 100%;
             margin: 5px 0;
         }
-        
-        /* Формы на всю ширину */
         .stForm {
             width: 100% !important;
         }
-        
-        /* Таблицы с горизонтальным скроллом */
         .stDataFrame {
             overflow-x: auto;
         }
-        
-        /* Сайдбар адаптируется */
         .css-1d391kg {
             padding: 1rem;
         }
     }
     
-    /* Общие стили для всех устройств */
     .main {
         font-family: Arial, sans-serif;
-    }
-    
-    /* Скрываем некоторые элементы на мобильных */
-    @media (max-width: 480px) {
-        .mobile-hidden {
-            display: none;
-        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -145,10 +122,9 @@ def get_month_stats(df, year_month=None):
     return stats
 
 # --- АДАПТИВНАЯ НАВИГАЦИЯ ---
-# На телефоне используем selectbox вместо radio для экономии места
 st.sidebar.title("📱 Навигация")
 
-# Определяем тип устройства по ширине экрана
+# Определяем тип устройства
 try:
     from streamlit import runtime
     if runtime.exists():
@@ -202,10 +178,9 @@ if page == "Главная":
     # Статистика за выбранный месяц
     month_stats = get_month_stats(df, selected_month)
     
-    # Основная статистика за месяц - адаптивные колонки
+    # Основная статистика за месяц
     st.subheader(f"📈 Статистика за {selected_month}")
     
-    # На мобильных делаем вертикальное расположение
     col1, col2 = st.columns(2)
     
     with col1:
@@ -219,28 +194,6 @@ if page == "Главная":
         st.markdown(f"🛍️ Продукты: {month_stats['products_income']:,} руб.")
         st.markdown(f"💐 Цветочный: {month_stats['flowers_income']:,} руб.")
         st.markdown(f"📮 Почта: {month_stats['post_income']:,} руб.")
-    
-    st.markdown("---")
-    
-    # Быстрый доступ - на мобильных вертикально
-    st.subheader("🚀 Быстрый доступ")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("👥 Добавить клиента", use_container_width=True):
-            st.session_state.page = "Добавить клиента"
-            st.rerun()
-    
-    with col2:
-        if st.button("📧 Рассылка", use_container_width=True):
-            st.session_state.page = "Рассылка"
-            st.rerun()
-    
-    with col3:
-        if st.button("📈 Аналитика", use_container_width=True):
-            st.session_state.page = "Аналитика"
-            st.rerun()
 
 # --- ДОБАВИТЬ КЛИЕНТА ---
 elif page == "Добавить клиента":
@@ -248,7 +201,6 @@ elif page == "Добавить клиента":
     st.markdown("---")
     
     with st.form("client_form"):
-        # На мобильных форма будет вертикальной
         direction = st.selectbox("Направление*", ["Учеба", "Продукты", "Цветочный", "Почта"])
         name = st.text_input("Имя клиента*")
         phone = st.text_input("Номер телефона*")
