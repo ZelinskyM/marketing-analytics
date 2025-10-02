@@ -1,4 +1,4 @@
-app = "telegram_bot"
+app = "telegram.bot"
 
 [build]
 
