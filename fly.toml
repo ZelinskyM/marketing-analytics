@@ -1,4 +1,4 @@
-app = "marketing-telegram-bot"
+app = "telegram_bot"
 
 [build]
 
