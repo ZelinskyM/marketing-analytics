@@ -91,7 +91,8 @@ df = load_data()
 # --- ФУНКЦИИ ДЛЯ СТАТИСТИКИ ---
 def get_today_stats(df):
     today = datetime.now().strftime("%Y-%m-%d")
-    today_df = df[df['Дата'].str.startswith(today)]
+    # Исключаем записи с направлением "Рассылка" из статистики
+    today_df = df[(df['Дата'].str.startswith(today)) & (df['Направление'] != 'Рассылка')]
     
     clients_today = today_df['Имя'].nunique()
     records_today = len(today_df)
@@ -104,7 +105,8 @@ def get_month_stats(df, year_month=None):
     if year_month is None:
         year_month = datetime.now().strftime("%Y-%m")
     
-    month_df = df[df['Дата'].str.startswith(year_month)]
+    # Исключаем записи с направлением "Рассылка" из статистики
+    month_df = df[(df['Дата'].str.startswith(year_month)) & (df['Направление'] != 'Рассылка')]
     
     stats = {
         'all_clients': month_df['Имя'].nunique(),
@@ -116,7 +118,11 @@ def get_month_stats(df, year_month=None):
         'flowers_clients': month_df[month_df['Направление'] == 'Цветочный']['Имя'].nunique(),
         'flowers_income': month_df[month_df['Направление'] == 'Цветочный']['Цена'].sum(),
         'post_clients': month_df[month_df['Направление'] == 'Почта']['Имя'].nunique(),
-        'post_income': month_df[month_df['Направление'] == 'Почта']['Цена'].sum()
+        'post_income': month_df[month_df['Направление'] == 'Почта']['Цена'].sum(),
+        'chop_clients': month_df[month_df['Направление'] == 'Chop']['Имя'].nunique(),
+        'chop_income': month_df[month_df['Направление'] == 'Chop']['Цена'].sum(),
+        'random_clients': month_df[month_df['Направление'] == 'Случайный']['Имя'].nunique(),
+        'random_income': month_df[month_df['Направление'] == 'Случайный']['Цена'].sum()
     }
     
     return stats
@@ -149,7 +155,7 @@ else:
 # --- СТАТИСТИКА ЗА ДЕНЬ В САЙДБАРЕ ---
 st.sidebar.markdown("---")
 
-# Получаем статистику за сегодня
+# Получаем статистику за сегодня (исключая рассылку)
 clients_today, records_today, income_today, salary_today = get_today_stats(df)
 
 st.sidebar.info(f"""
@@ -175,7 +181,7 @@ if page == "Главная":
         selected_month = datetime.now().strftime("%Y-%m")
         st.selectbox("Выберите месяц для аналитики:", [selected_month])
     
-    # Статистика за выбранный месяц
+    # Статистика за выбранный месяц (исключая рассылку)
     month_stats = get_month_stats(df, selected_month)
     
     # Основная статистика за месяц
@@ -194,6 +200,8 @@ if page == "Главная":
         st.markdown(f"🛍️ Продукты: {month_stats['products_income']:,} руб.")
         st.markdown(f"💐 Цветочный: {month_stats['flowers_income']:,} руб.")
         st.markdown(f"📮 Почта: {month_stats['post_income']:,} руб.")
+        st.markdown(f"✂️ Chop: {month_stats['chop_income']:,} руб.")
+        st.markdown(f"🎲 Случайный: {month_stats['random_income']:,} руб.")
 
 # --- ДОБАВИТЬ КЛИЕНТА ---
 elif page == "Добавить клиента":
@@ -201,7 +209,8 @@ elif page == "Добавить клиента":
     st.markdown("---")
     
     with st.form("client_form"):
-        direction = st.selectbox("Направление*", ["Учеба", "Продукты", "Цветочный", "Почта"])
+        # Добавляем новые направления "Chop" и "Случайный"
+        direction = st.selectbox("Направление*", ["Учеба", "Продукты", "Цветочный", "Почта", "Chop", "Случайный"])
         name = st.text_input("Имя клиента*")
         phone = st.text_input("Номер телефона*")
         service = st.selectbox("Услуга*", list(SERVICE_PRICES.keys()))
@@ -211,7 +220,8 @@ elif page == "Добавить клиента":
         
         # Поле "Кто пригласил" только для Учебы
         if direction == "Учеба":
-            all_people = list(df["Имя"].unique())
+            # Все клиенты из базы + контакты из рассылки (исключая направление "Рассылка" из выбора)
+            all_people = list(df[df['Направление'] != 'Рассылка']["Имя"].unique())
             mailing_contacts = list(df[df["Направление"] == "Рассылка"]["Имя"].unique())
             all_available_people = list(set(all_people + mailing_contacts))
             
@@ -331,19 +341,21 @@ elif page == "Аналитика":
         col3, col4 = st.columns(2)
         
         with col1:
-            total_income = df["Цена"].sum()
+            # Исключаем рассылку из общей статистики
+            total_income = df[df['Направление'] != 'Рассылка']["Цена"].sum()
             st.metric("Общая выручка", f"{total_income:,} руб.")
             
         with col2:
-            total_clients = df["Имя"].nunique()
+            total_clients = df[df['Направление'] != 'Рассылка']["Имя"].nunique()
             st.metric("Всего клиентов", total_clients)
             
         with col3:
-            total_services = len(df)
+            total_services = len(df[df['Направление'] != 'Рассылка'])
             st.metric("Всего услуг", total_services)
             
         with col4:
-            avg_price = df["Цена"].mean()
+            filtered_df = df[df['Направление'] != 'Рассылка']
+            avg_price = filtered_df["Цена"].mean() if len(filtered_df) > 0 else 0
             st.metric("Средний чек", f"{avg_price:.0f} руб.")
         
         # Фильтры
