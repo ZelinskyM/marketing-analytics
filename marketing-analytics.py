@@ -11,42 +11,172 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- АДАПТИВНЫЙ CSS ДЛЯ ТЕЛЕФОНА ---
+# --- СОВРЕМЕННЫЙ CSS ---
 st.markdown("""
 <style>
+    /* Основные стили */
+    .main {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #0F1117;
+        color: #FAFAFA;
+    }
+    
+    .main .block-container {
+        background: #1E1E1E;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 1rem;
+        border: 1px solid #2D2D2D;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    /* Сайдбар */
+    .css-1d391kg {
+        background: linear-gradient(135deg, #1E1E1E 0%, #2D2D2D 100%);
+        border-right: 1px solid #2D2D2D;
+    }
+    
+    .css-1d391kg .css-1lcbmhc {
+        background: transparent;
+    }
+    
+    /* Заголовки */
+    h1, h2, h3 {
+        color: #FFFFFF;
+        font-weight: 600;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Кнопки */
+    .stButton>button {
+        background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    }
+    
+    /* Формы */
+    .stForm {
+        background: #2D2D2D;
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid #3D3D3D;
+    }
+    
+    .stTextInput>div>div>input, .stSelectbox>div>div>select {
+        background: #1E1E1E;
+        border: 1px solid #3D3D3D;
+        border-radius: 10px;
+        color: #FFFFFF;
+        padding: 12px;
+    }
+    
+    .stRadio>div {
+        background: #2D2D2D;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid #3D3D3D;
+    }
+    
+    /* Информационные блоки */
+    .stInfo {
+        background: linear-gradient(135deg, #2D2D2D, #3D3D3D);
+        border: 1px solid #4ECDC4;
+        border-radius: 12px;
+    }
+    
+    /* Метрики */
+    .stMetric {
+        background: linear-gradient(135deg, #2D2D2D, #3D3D3D);
+        border: 1px solid #3D3D3D;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+    
+    /* Таблицы */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #3D3D3D;
+    }
+    
+    /* Адаптивность для телефона */
     @media (max-width: 768px) {
         .main .block-container {
             padding: 1rem;
+            border-radius: 12px;
+            margin-top: 0.5rem;
         }
-        .row-widget.stColumns {
-            flex-direction: column;
-        }
+        
         h1 {
-            font-size: 1.5rem !important;
+            font-size: 1.8rem;
         }
-        h2 {
-            font-size: 1.3rem !important;
-        }
-        h3 {
-            font-size: 1.1rem !important;
-        }
-        .stButton button {
-            width: 100%;
-            margin: 5px 0;
-        }
+        
         .stForm {
-            width: 100% !important;
+            padding: 1.5rem;
         }
-        .stDataFrame {
-            overflow-x: auto;
-        }
+        
+        /* Автоматическое скрытие сайдбара после выбора */
         .css-1d391kg {
-            padding: 1rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .css-1d391kg:focus-within {
+            transform: translateX(0);
         }
     }
     
-    .main {
-        font-family: Arial, sans-serif;
+    /* Скрываем некоторые элементы на очень маленьких экранах */
+    @media (max-width: 480px) {
+        .main .block-container {
+            padding: 0.8rem;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        h2 {
+            font-size: 1.2rem;
+        }
+    }
+    
+    /* Стили для успешных сообщений */
+    .stSuccess {
+        background: linear-gradient(135deg, #2D2D2D, #1E3A28);
+        border: 1px solid #10B981;
+        border-radius: 12px;
+    }
+    
+    /* Стили для предупреждений */
+    .stWarning {
+        background: linear-gradient(135deg, #2D2D2D, #3A2A1E);
+        border: 1px solid #F59E0B;
+        border-radius: 12px;
+    }
+    
+    /* Стили для ошибок */
+    .stError {
+        background: linear-gradient(135deg, #2D2D2D, #3A1E1E);
+        border: 1px solid #EF4444;
+        border-radius: 12px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -59,13 +189,14 @@ def create_client_id(name, phone):
 def load_data():
     try:
         df = pd.read_csv("marketing_database.csv", encoding='utf-8')
-        if 'client_id' not in df.columns:
-            df['client_id'] = df.apply(lambda row: create_client_id(row['Имя'], row['Телефон']), axis=1)
+        # Создаем visit_id для существующих данных если его нет
+        if 'visit_id' not in df.columns:
+            df['visit_id'] = df.apply(lambda row: hashlib.md5(f"{row['Дата']}_{row['Имя']}_{row['Телефон']}".encode()).hexdigest(), axis=1)
             df.to_csv("marketing_database.csv", index=False, encoding='utf-8')
         return df
     except FileNotFoundError:
         return pd.DataFrame(columns=[
-            "client_id", "Дата", "Направление", "Имя", "Телефон", "Услуга", 
+            "visit_id", "client_id", "Дата", "Направление", "Имя", "Телефон", "Услуга", 
             "Цена", "Кто_пригласил", "Место_учебы", "Ссылка_VK", "Согласие_рассылка"
         ])
 
@@ -91,7 +222,6 @@ df = load_data()
 # --- ФУНКЦИИ ДЛЯ СТАТИСТИКИ ---
 def get_today_stats(df):
     today = datetime.now().strftime("%Y-%m-%d")
-    # Исключаем записи с направлением "Рассылка" из статистики
     today_df = df[(df['Дата'].str.startswith(today)) & (df['Направление'] != 'Рассылка')]
     
     clients_today = today_df['Имя'].nunique()
@@ -105,7 +235,6 @@ def get_month_stats(df, year_month=None):
     if year_month is None:
         year_month = datetime.now().strftime("%Y-%m")
     
-    # Исключаем записи с направлением "Рассылка" из статистики
     month_df = df[(df['Дата'].str.startswith(year_month)) & (df['Направление'] != 'Рассылка')]
     
     stats = {
@@ -127,8 +256,14 @@ def get_month_stats(df, year_month=None):
     
     return stats
 
+# --- ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ИСТОРИИ КЛИЕНТА ---
+def get_client_history(df, client_id):
+    """Возвращает историю всех посещений клиента"""
+    client_history = df[df['client_id'] == client_id].sort_values('Дата', ascending=False)
+    return client_history
+
 # --- АДАПТИВНАЯ НАВИГАЦИЯ ---
-st.sidebar.title("📱 Навигация")
+st.sidebar.title("🚀 Навигация")
 
 # Определяем тип устройства
 try:
@@ -147,28 +282,29 @@ except:
 
 if is_mobile:
     page = st.sidebar.selectbox("Выберите страницу:", 
-        ["Главная", "Добавить клиента", "Рассылка", "Аналитика"])
+        ["Главная", "Добавить клиента", "Рассылка", "Аналитика", "История клиентов"])
 else:
     page = st.sidebar.radio("Выберите страницу:", 
-        ["Главная", "Добавить клиента", "Рассылка", "Аналитика"])
+        ["Главная", "Добавить клиента", "Рассылка", "Аналитика", "История клиентов"])
 
 # --- СТАТИСТИКА ЗА ДЕНЬ В САЙДБАРЕ ---
 st.sidebar.markdown("---")
+st.sidebar.markdown("### 📊 Сегодня")
 
-# Получаем статистику за сегодня (исключая рассылку)
 clients_today, records_today, income_today, salary_today = get_today_stats(df)
 
-st.sidebar.info(f"""
-**Статистика за день:**
-- Клиентов: {clients_today}
-- Записей: {records_today}
-- Выручка: {income_today:,} руб.
-- Зарплата (40%): {salary_today:,.0f} руб.
-""")
+st.sidebar.markdown(f"""
+<div style='background: linear-gradient(135deg, #2D2D2D, #3D3D3D); padding: 1rem; border-radius: 12px; border: 1px solid #3D3D3D;'>
+    <div style='color: #4ECDC4; font-size: 0.9rem;'>👥 Клиентов: <b>{clients_today}</b></div>
+    <div style='color: #FF6B6B; font-size: 0.9rem;'>📝 Записей: <b>{records_today}</b></div>
+    <div style='color: #FFD93D; font-size: 0.9rem;'>💰 Выручка: <b>{income_today:,} ₽</b></div>
+    <div style='color: #6BCF7F; font-size: 0.9rem;'>💵 Зарплата: <b>{salary_today:,.0f} ₽</b></div>
+</div>
+""", unsafe_allow_html=True)
 
 # --- ГЛАВНАЯ СТРАНИЦА ---
 if page == "Главная":
-    st.title("🏠 Marketing Analytics")
+    st.title("📈 Marketing Analytics")
     st.markdown("---")
     
     # Выбор месяца для аналитики
@@ -181,91 +317,104 @@ if page == "Главная":
         selected_month = datetime.now().strftime("%Y-%m")
         st.selectbox("Выберите месяц для аналитики:", [selected_month])
     
-    # Статистика за выбранный месяц (исключая рассылку)
+    # Статистика за выбранный месяц
     month_stats = get_month_stats(df, selected_month)
     
     # Основная статистика за месяц
-    st.subheader(f"📈 Статистика за {selected_month}")
+    st.subheader(f"📊 Статистика за {selected_month}")
     
-    col1, col2 = st.columns(2)
+    # Создаем две колонки: левая для основных метрик, правая для аналитики по направлениям
+    col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.metric("Всего клиентов за месяц", month_stats['all_clients'])
-        st.metric("Общая выручка за месяц", f"{month_stats['all_income']:,} руб.")
+        # Основные метрики друг под другом
+        st.metric("👥 Клиентов", month_stats['all_clients'])
+        st.metric("💰 Выручка", f"{month_stats['all_income']:,} ₽")
     
     with col2:
-        # Статистика по направлениям
-        st.markdown("**Выручка по направлениям:**")
-        st.markdown(f"📚 Учеба: {month_stats['study_income']:,} руб.")
-        st.markdown(f"🛍️ Продукты: {month_stats['products_income']:,} руб.")
-        st.markdown(f"💐 Цветочный: {month_stats['flowers_income']:,} руб.")
-        st.markdown(f"📮 Почта: {month_stats['post_income']:,} руб.")
-        st.markdown(f"✂️ Chop: {month_stats['chop_income']:,} руб.")
-        st.markdown(f"🎲 Случайный: {month_stats['random_income']:,} руб.")
+        # Аналитика по направлениям (компактно)
+        st.markdown("**📈 По направлениям:**")
+        st.markdown(f"📚 Учеба {month_stats['study_income']:,} ₽")
+        st.markdown(f"🛍️ Продукты {month_stats['products_income']:,} ₽")
+        st.markdown(f"💐 Цветочный{month_stats['flowers_income']:,} ₽")
+        st.markdown(f"📮 Почта {month_stats['post_income']:,} ₽")
+        st.markdown(f"✂️ Chop {month_stats['chop_income']:,} ₽")
+        st.markdown(f"🎲 Случайный {month_stats['random_income']:,} ₽")
 
 # --- ДОБАВИТЬ КЛИЕНТА ---
 elif page == "Добавить клиента":
     st.title("👥 Добавить клиента")
     st.markdown("---")
     
-    with st.form("client_form"):
-        # Добавляем новые направления "Chop" и "Случайный"
-        direction = st.selectbox("Направление*", ["Учеба", "Продукты", "Цветочный", "Почта", "Chop", "Случайный"])
-        name = st.text_input("Имя клиента*")
-        phone = st.text_input("Номер телефона*")
-        service = st.selectbox("Услуга*", list(SERVICE_PRICES.keys()))
+    # Создаем форму с уникальным ключом
+    with st.form("client_form", clear_on_submit=True):
+        col1, col2 = st.columns(2)
         
-        price = SERVICE_PRICES[service]
-        st.info(f"💰 Стоимость услуги: **{price} руб.**")
-        
-        # Поле "Кто пригласил" только для Учебы
-        if direction == "Учеба":
-            # Все клиенты из базы + контакты из рассылки (исключая направление "Рассылка" из выбора)
-            all_people = list(df[df['Направление'] != 'Рассылка']["Имя"].unique())
-            mailing_contacts = list(df[df["Направление"] == "Рассылка"]["Имя"].unique())
-            all_available_people = list(set(all_people + mailing_contacts))
+        with col1:
+            direction = st.selectbox("Направление*", ["Учеба", "Продукты", "Цветочный", "Почта", "Chop", "Случайный"])
+            name = st.text_input("Имя клиента*")
+            phone = st.text_input("Номер телефона*")
             
-            invited_by = st.selectbox("Кто пригласил", [""] + sorted(all_available_people))
-        else:
-            invited_by = ""
+        with col2:
+            service = st.selectbox("Услуга*", list(SERVICE_PRICES.keys()))
+            price = SERVICE_PRICES[service]
+            st.info(f"💰 Стоимость услуги: **{price} руб.**")
+            
+            # Поле "Кто пригласил" только для Учебы
+            if direction == "Учеба":
+                all_people = list(df[df['Направление'] != 'Рассылка']["Имя"].unique())
+                mailing_contacts = list(df[df["Направление"] == "Рассылка"]["Имя"].unique())
+                all_available_people = list(set(all_people + mailing_contacts))
+                
+                invited_by = st.selectbox("Кто пригласил", [""] + sorted(all_available_people))
+            else:
+                invited_by = ""
         
         submitted = st.form_submit_button("💾 Сохранить клиента", use_container_width=True)
         
         if submitted:
             if name and phone and service:
                 client_id = create_client_id(name, phone)
+                visit_id = hashlib.md5(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_{name}_{phone}".encode()).hexdigest()
                 
-                # Проверка на дубликат
+                # Проверка на существующего клиента
                 existing_client = df[df['client_id'] == client_id]
                 
                 if len(existing_client) > 0:
-                    st.warning("Клиент уже существует в базе. Обновляем информацию...")
-                    mask = df['client_id'] == client_id
-                    df.loc[mask, 'Дата'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    df.loc[mask, 'Направление'] = direction
-                    df.loc[mask, 'Услуга'] = service
-                    df.loc[mask, 'Цена'] = price
-                    df.loc[mask, 'Кто_пригласил'] = invited_by
-                else:
-                    new_client = {
-                        "client_id": client_id,
-                        "Дата": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "Направление": direction,
-                        "Имя": name,
-                        "Телефон": phone,
-                        "Услуга": service,
-                        "Цена": price,
-                        "Кто_пригласил": invited_by,
-                        "Место_учебы": "",
-                        "Ссылка_VK": "",
-                        "Согласие_рассылка": ""
-                    }
-                    df = pd.concat([df, pd.DataFrame([new_client])], ignore_index=True)
+                    st.warning(f"👤 Клиент {name} уже существует в базе. Добавляем новое посещение...")
+                    
+                    # Показываем историю клиента
+                    client_history = get_client_history(df, client_id)
+                    st.info(f"📋 История клиента {name} ({len(client_history)} посещений):")
+                    
+                    for _, visit in client_history.head(3).iterrows():
+                        st.write(f"• {visit['Дата'][:16]} - {visit['Услуга']} ({visit['Цена']} руб.)")
+                    
+                    if len(client_history) > 3:
+                        st.write(f"... и еще {len(client_history) - 3} посещений")
+                
+                # Добавляем новую запись (посещение)
+                new_visit = {
+                    "visit_id": visit_id,
+                    "client_id": client_id,
+                    "Дата": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "Направление": direction,
+                    "Имя": name,
+                    "Телефон": phone,
+                    "Услуга": service,
+                    "Цена": price,
+                    "Кто_пригласил": invited_by,
+                    "Место_учебы": "",
+                    "Ссылка_VK": "",
+                    "Согласие_рассылка": ""
+                }
+                df = pd.concat([df, pd.DataFrame([new_visit])], ignore_index=True)
                 
                 save_data(df)
-                st.success(f"Клиент {name} успешно сохранен!")
+                st.success(f"✅ Посещение клиента {name} успешно сохранено!")
+                
             else:
-                st.error("Пожалуйста, заполните обязательные поля (отмечены *)")
+                st.error("❌ Пожалуйста, заполните обязательные поля (отмечены *)")
 
 # --- РАССЫЛКА ---
 elif page == "Рассылка":
@@ -279,19 +428,26 @@ elif page == "Рассылка":
         tab_option = st.radio("Выберите раздел:", ["Добавить контакт", "База контактов"], horizontal=True)
     
     if tab_option == "Добавить контакт":
-        with st.form("mailing_form"):
-            mailing_name = st.text_input("Имя*")
-            study_place = st.text_input("Место учебы")
-            vk_link = st.text_input("Ссылка VK")
-            mailing_consent = st.radio("Согласие на рассылку*", ["Да", "Нет"])
+        with st.form("mailing_form", clear_on_submit=True):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                mailing_name = st.text_input("Имя*")
+                study_place = st.text_input("Место учебы")
+                
+            with col2:
+                vk_link = st.text_input("Ссылка VK")
+                mailing_consent = st.radio("Согласие на рассылку*", ["Да", "Нет"])
             
             submitted_mailing = st.form_submit_button("💾 Сохранить контакт", use_container_width=True)
             
             if submitted_mailing:
                 if mailing_name:
                     client_id = create_client_id(mailing_name, "")
+                    visit_id = hashlib.md5(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_{mailing_name}_".encode()).hexdigest()
                     
                     new_mailing = {
+                        "visit_id": visit_id,
                         "client_id": client_id,
                         "Дата": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         "Направление": "Рассылка",
@@ -306,9 +462,9 @@ elif page == "Рассылка":
                     }
                     df = pd.concat([df, pd.DataFrame([new_mailing])], ignore_index=True)
                     save_data(df)
-                    st.success(f"{mailing_name} добавлен в базу рассылки!")
+                    st.success(f"✅ {mailing_name} добавлен в базу рассылки!")
                 else:
-                    st.error("Пожалуйста, укажите имя")
+                    st.error("❌ Пожалуйста, укажите имя")
     
     else:  # База контактов
         mailing_df = df[df["Направление"] == "Рассылка"]
@@ -320,13 +476,13 @@ elif page == "Рассылка":
                 mailing_df["Имя"].unique()
             )
             
-            if contacts_to_delete and st.button("Удалить выбранные контакты", use_container_width=True):
+            if contacts_to_delete and st.button("🗑️ Удалить выбранные контакты", use_container_width=True):
                 df = df[~((df["Направление"] == "Рассылка") & (df["Имя"].isin(contacts_to_delete)))]
                 save_data(df)
-                st.success(f"Удалено {len(contacts_to_delete)} контактов!")
+                st.success(f"✅ Удалено {len(contacts_to_delete)} контактов!")
                 st.rerun()
         else:
-            st.info("База рассылки пуста")
+            st.info("📭 База рассылки пуста")
 
 # --- АНАЛИТИКА ---
 elif page == "Аналитика":
@@ -334,40 +490,39 @@ elif page == "Аналитика":
     st.markdown("---")
     
     if not df.empty:
-        # Статистика - на мобильных вертикально
+        # Статистика
         st.subheader("📊 Общая статистика")
         
-        col1, col2 = st.columns(2)
-        col3, col4 = st.columns(2)
+        col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            # Исключаем рассылку из общей статистики
             total_income = df[df['Направление'] != 'Рассылка']["Цена"].sum()
-            st.metric("Общая выручка", f"{total_income:,} руб.")
+            st.metric("💰 Выручка", f"{total_income:,} ₽")
             
         with col2:
             total_clients = df[df['Направление'] != 'Рассылка']["Имя"].nunique()
-            st.metric("Всего клиентов", total_clients)
+            st.metric("👥 Клиентов", total_clients)
             
         with col3:
             total_services = len(df[df['Направление'] != 'Рассылка'])
-            st.metric("Всего услуг", total_services)
+            st.metric("📝 Услуг", total_services)
             
         with col4:
             filtered_df = df[df['Направление'] != 'Рассылка']
             avg_price = filtered_df["Цена"].mean() if len(filtered_df) > 0 else 0
-            st.metric("Средний чек", f"{avg_price:.0f} руб.")
+            st.metric("💳 Средний чек", f"{avg_price:.0f} ₽")
         
         # Фильтры
         st.subheader("🔍 Фильтры")
         
-        filter_direction = st.multiselect("Направление", df["Направление"].unique())
-        filter_service = st.multiselect("Услуга", df["Услуга"].unique())
-        
         col1, col2 = st.columns(2)
+        
         with col1:
-            min_price = st.number_input("Минимальная цена", 0, value=0)
+            filter_direction = st.multiselect("Направление", df["Направление"].unique())
+            filter_service = st.multiselect("Услуга", df["Услуга"].unique())
+            
         with col2:
+            min_price = st.number_input("Минимальная цена", 0, value=0)
             max_price = st.number_input("Максимальная цена", 0, value=int(df["Цена"].max()))
         
         # Применяем фильтры
@@ -382,7 +537,7 @@ elif page == "Аналитика":
         
         # Данные
         st.subheader("📋 Данные")
-        st.dataframe(filtered_df)
+        st.dataframe(filtered_df, use_container_width=True)
         
         # Управление клиентами
         st.subheader("🗑️ Управление клиентами")
@@ -391,17 +546,17 @@ elif page == "Аналитика":
         if len(all_clients) > 0:
             clients_to_delete = st.multiselect("Выберите клиентов для удаления:", all_clients)
             
-            if clients_to_delete and st.button("Удалить выбранных клиентов", use_container_width=True):
+            if clients_to_delete and st.button("🗑️ Удалить выбранных клиентов", use_container_width=True):
                 df = df[~df["Имя"].isin(clients_to_delete)]
                 save_data(df)
-                st.success(f"Удалено {len(clients_to_delete)} клиентов!")
+                st.success(f"✅ Удалено {len(clients_to_delete)} клиентов!")
                 st.rerun()
         
         # Экспорт
         st.subheader("📤 Экспорт данных")
         csv = filtered_df.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="Скачать CSV",
+            label="📥 Скачать CSV",
             data=csv,
             file_name=f"marketing_data_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
@@ -409,4 +564,79 @@ elif page == "Аналитика":
         )
         
     else:
-        st.info("Данные появятся здесь после добавления клиентов")
+        st.info("📊 Данные появятся здесь после добавления клиентов")
+
+# --- ИСТОРИЯ КЛИЕНТОВ ---
+elif page == "История клиентов":
+    st.title("📋 История клиентов")
+    st.markdown("---")
+    
+    if not df.empty:
+        # Выбор клиента для просмотра истории
+        all_clients = sorted(df[df['Направление'] != 'Рассылка']['Имя'].unique())
+        
+        if all_clients:
+            selected_client = st.selectbox("Выберите клиента для просмотра истории:", all_clients)
+            
+            if selected_client:
+                # Находим client_id выбранного клиента
+                client_data = df[df['Имя'] == selected_client]
+                if not client_data.empty:
+                    client_id = client_data.iloc[0]['client_id']
+                    
+                    # Получаем историю клиента
+                    client_history = get_client_history(df, client_id)
+                    
+                    # Основная информация о клиенте
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        total_visits = len(client_history)
+                        st.metric("📊 Всего посещений", total_visits)
+                    
+                    with col2:
+                        total_spent = client_history['Цена'].sum()
+                        st.metric("💰 Всего потрачено", f"{total_spent:,} ₽")
+                    
+                    with col3:
+                        avg_spent = total_spent / total_visits if total_visits > 0 else 0
+                        st.metric("💳 Средний чек", f"{avg_spent:.0f} ₽")
+                    
+                    st.markdown("---")
+                    
+                    # История посещений
+                    st.subheader("📅 История посещений")
+                    for _, visit in client_history.iterrows():
+                        with st.container():
+                            col1, col2, col3 = st.columns([2, 1, 1])
+                            with col1:
+                                st.write(f"**{visit['Дата'][:16]}**")
+                            with col2:
+                                st.write(f"**{visit['Услуга']}**")
+                            with col3:
+                                st.write(f"**{visit['Цена']} ₽**")
+                            
+                            if visit['Направление'] == 'Учеба' and visit['Кто_пригласил']:
+                                st.write(f"Пригласил: {visit['Кто_пригласил']}")
+                            
+                            st.markdown("---")
+                else:
+                    st.info("Клиент не найден в базе данных")
+        else:
+            st.info("📊 В базе данных пока нет клиентов")
+    else:
+        st.info("📊 Данные появятся здесь после добавления клиентов")
+
+# --- JavaScript для автоматического скрытия сайдбара на телефоне ---
+if is_mobile:
+    st.markdown("""
+    <script>
+    // Автоматическое скрытие сайдбара после выбора пункта на мобильных
+    setTimeout(function() {
+        const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.transform = "translateX(-100%)";
+        }
+    }, 100);
+    </script>
+    """, unsafe_allow_html=True)
